@@ -5,7 +5,6 @@ interface ContextMenuProps {
   y: number;
   onClose: () => void;
   fileName: string;
-  fileType: "file" | "folder";
 }
 
 const ContextMenu: React.FC<ContextMenuProps> = ({
@@ -13,7 +12,6 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
   y,
   onClose,
   fileName,
-  fileType,
 }) => {
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -40,9 +38,6 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
       <button onClick={() => handleAction("Copy")}>Copy</button>
       <button onClick={() => handleAction("Delete")}>Delete</button>
       <button onClick={() => handleAction("Rename")}>Rename</button>
-      {fileType === "folder" && (
-        <button onClick={() => handleAction("New File")}>New File</button>
-      )}
     </div>
   );
 };

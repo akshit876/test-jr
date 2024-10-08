@@ -5,11 +5,13 @@ import ContextMenu from "./ContextMenu";
 interface FileItemProps {
   file: FileData;
   level: number;
+  isSelected: boolean;
+  onSelect: (fileName: string) => void;
+  children?: React.ReactNode;
 }
 
-const FileItem: React.FC<FileItemProps> = ({ file, level }) => {
+const FileItem: React.FC<FileItemProps> = ({ file, level, isSelected, onSelect, children }) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [isSelected, setIsSelected] = useState(false);
   const [contextMenu, setContextMenu] = useState<{
     x: number;
     y: number;
@@ -20,14 +22,16 @@ const FileItem: React.FC<FileItemProps> = ({ file, level }) => {
     if (file.type === "folder") {
       setIsExpanded(!isExpanded);
     } else {
-      setIsSelected(!isSelected);
+      onSelect(file.name);
     }
   };
 
   const handleContextMenu = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    setContextMenu({ x: e.clientX, y: e.clientY });
+    if (file.type === "file") {
+      setContextMenu({ x: e.clientX, y: e.clientY });
+    }
   };
 
   const handleCloseContextMenu = () => {
@@ -65,11 +69,9 @@ const FileItem: React.FC<FileItemProps> = ({ file, level }) => {
       >
         {getIcon()} {file.name}
       </div>
-      {isExpanded && file.data && (
-        <div>
-          {file.data.map((child, index) => (
-            <FileItem key={index} file={child} level={level + 1} />
-          ))}
+      {isExpanded && children && (
+        <div className="file-children">
+          {children}
         </div>
       )}
       {contextMenu && (
@@ -78,7 +80,6 @@ const FileItem: React.FC<FileItemProps> = ({ file, level }) => {
           y={contextMenu.y}
           onClose={handleCloseContextMenu}
           fileName={file.name}
-          fileType={file.type}
         />
       )}
     </div>
